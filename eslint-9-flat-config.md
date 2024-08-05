@@ -290,6 +290,46 @@ npx eslint --init
 ```
 Except custommized rules and **stylistic**.
 
+## What's more, to ignore files?
+
+In ESLint 9, it doesn't read ignore file like `.eslintignore` automatically, you should manully add ignore patterns
+```js
+export default [    
+    {
+        // https://eslint.org/docs/latest/use/configure/ignore
+        ignores: [
+            // only ignore node_modules in the same directory
+            // as the configuration file
+            "node_modules",
+            // so you have to add `**/` pattern to include nested directories
+            // for example, if you use pnpm workspace
+            "**/node_modules",
+            // also you can add a new rule to revert a ignore
+            "!./packages/manual-add-lib/node_modules/local-lib.js"
+        ]
+    }
+]
+```
+
+for compat purpose, you also can use includeIgnoreFile to read .eslintignore file directly.
+
+**be concern with gitignore or eslintignore file and [ESLint pattern rules](https://eslint.org/docs/latest/use/configure/ignore)**
+
+```js
+// eslint.config.mjs
+import { includeIgnoreFile } from "@eslint/compat"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const ignorePath = path.resolve(__dirname, ".eslintignore")
+
+export default [
+    { /* ... your eslint config ...*/ },
+    includeIgnoreFile(ignorePath)
+]
+```
+
 **End**
 
 ## Links
@@ -299,3 +339,4 @@ Except custommized rules and **stylistic**.
 3. Languate Options: https://eslint.org/docs/latest/use/configure/language-options
 4. Gists: https://gist.github.com/aolyang/8ad9c14209b069806eac45b5927d00de
 5. Stylistic: https://eslint.style/guide/getting-started
+6. ESLint 9 ignore rules: https://eslint.org/docs/latest/use/configure/ignore
